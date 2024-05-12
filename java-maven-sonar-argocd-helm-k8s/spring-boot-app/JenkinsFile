@@ -39,14 +39,14 @@ pipeline {
       steps {
         script {
             sh 'ls -ltr' ${env.LAUNCH_DIAGNOSTICS}
-            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} . ${env.LAUNCH_DIAGNOSTICS}'
+            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE}' . ${env.LAUNCH_DIAGNOSTICS}
             sh 'ls -ltr ${env.LAUNCH_DIAGNOSTICS}'
             def dockerImage = docker.image("${DOCKER_IMAGE}") ${env.LAUNCH_DIAGNOSTICS}
-            sh 'ls -ltr ${env.LAUNCH_DIAGNOSTICS}'
+            sh 'ls -ltr' ${env.LAUNCH_DIAGNOSTICS}          
             docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                dockerImage.push() ${env.LAUNCH_DIAGNOSTICS}
+                dockerImage.push() 
             }
-            sh 'ls -ltr ${env.LAUNCH_DIAGNOSTICS}'
+            sh 'ls -ltr' ${env.LAUNCH_DIAGNOSTICS}
         }
       }
     }
