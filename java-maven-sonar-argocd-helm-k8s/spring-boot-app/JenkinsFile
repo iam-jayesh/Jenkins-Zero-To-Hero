@@ -34,19 +34,21 @@ pipeline {
         DOCKER_IMAGE = "tojayesh/ultimate-cicd:${BUILD_NUMBER}"
         // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
         REGISTRY_CREDENTIALS = credentials('docker-cred')
-        LAUNCH_DIAGNOSTICS = "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
+        // LAUNCH_DIAGNOSTICS = "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
       }
       steps {
         script {
-            sh 'ls -ltr' ${env.LAUNCH_DIAGNOSTICS}
-            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .' 
-            sh 'ls -ltr' ${env.LAUNCH_DIAGNOSTICS}
+            sh 'ls -ltr'
+            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app'
+            sh 'ls -ltr'
+            sh 'docker build -t ${DOCKER_IMAGE} .' 
+            sh 'ls -ltr' 
             def dockerImage = docker.image("${DOCKER_IMAGE}")
-            sh 'ls -ltr' ${env.LAUNCH_DIAGNOSTICS}          
+            sh 'ls -ltr'        
             docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
                 dockerImage.push() 
             }
-            sh 'ls -ltr' ${env.LAUNCH_DIAGNOSTICS}
+            sh 'ls -ltr'
         }
       }
     }
