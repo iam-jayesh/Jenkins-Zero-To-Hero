@@ -39,8 +39,11 @@ pipeline {
       steps {
         script {
             sh 'echo "Current directory: $(pwd)"'
-            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t tojayesh/ultimate-cicd:${BUILD_NUMBER} .' 
-            def dockerImage = docker.image("tojayesh/ultimate-cicd:${BUILD_NUMBER}")
+            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .' 
+            def dockerImage = docker.image("${DOCKER_IMAGE}")
+            withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            sh 'docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"'
+            sh "docker push ${DOCKER_IMAGE}"
          //   docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
           //      dockerImage1.push() 
           //  }
