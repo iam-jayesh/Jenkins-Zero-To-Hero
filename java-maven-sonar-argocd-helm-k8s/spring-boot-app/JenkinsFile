@@ -1,9 +1,6 @@
 pipeline {
   agent {
-  environment {
-    LAUNCH_DIAGNOSTICS = "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
-  }
-    docker {
+   docker {
       image 'tojayesh/maven-jayesh-docker-agent:v1'
       args '-u root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
     }
@@ -37,18 +34,19 @@ pipeline {
         DOCKER_IMAGE = "tojayesh/ultimate-cicd:${BUILD_NUMBER}"
         // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
         REGISTRY_CREDENTIALS = credentials('docker-cred')
+        LAUNCH_DIAGNOSTICS = "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
       }
       steps {
         script {
-            sh 'ls -ltr'
-            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
-            sh 'ls -ltr'
-            def dockerImage = docker.image("${DOCKER_IMAGE}")
-            sh 'ls -ltr'
+            sh 'ls -ltr ${env.LAUNCH_DIAGNOSTICS}'
+            sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} . ${env.LAUNCH_DIAGNOSTICS}'
+            sh 'ls -ltr ${env.LAUNCH_DIAGNOSTICS}'
+            def dockerImage = docker.image("${DOCKER_IMAGE}") ${env.LAUNCH_DIAGNOSTICS}
+            sh 'ls -ltr ${env.LAUNCH_DIAGNOSTICS}'
             docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                dockerImage.push()
+                dockerImage.push() ${env.LAUNCH_DIAGNOSTICS}
             }
-            sh 'ls -ltr'
+            sh 'ls -ltr ${env.LAUNCH_DIAGNOSTICS}'
         }
       }
     }
@@ -56,6 +54,7 @@ pipeline {
         environment {
             GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
             GIT_USER_NAME = "iam-jayesh"
+            LAUNCH_DIAGNOSTICS = "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
         }
         steps {
             withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
