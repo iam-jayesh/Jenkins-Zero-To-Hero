@@ -1,5 +1,8 @@
 pipeline {
   agent {
+  environment {
+    LAUNCH_DIAGNOSTICS = "-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"
+  }
     docker {
       image 'tojayesh/maven-jayesh-docker-agent:v1'
       args '-u root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
